@@ -1,8 +1,35 @@
-// story.js — Interactive Story Engine
+// script.js — Interactive Story Engine
 (function () {
   'use strict';
 
-  /* ═══ This for the cases it grabs images from steam chances etc garunteed tenth roll═══ */
+  /* ═══ SOUND EFFECTS ═══ */
+  function playSound(freq, type, duration) {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type || 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.15, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (duration || 0.3));
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + (duration || 0.3));
+    } catch (e) {
+      // Audio not supported — ignore silently
+    }
+  }
+  function sfxClick()   { playSound(600, 'sine', 0.1); }
+  function sfxGold()    { playSound(880, 'sine', 0.6); playSound(1320, 'sine', 0.6); }
+  function sfxHit()     { playSound(120, 'square', 0.15); }
+  function sfxWin()     { playSound(523, 'sine', 0.2); setTimeout(() => playSound(659, 'sine', 0.2), 150); setTimeout(() => playSound(784, 'sine', 0.4), 300); }
+  function sfxLose()    { playSound(200, 'sawtooth', 0.5); }
+  function sfxGlitch()  { playSound(80, 'sawtooth', 0.3); playSound(2000, 'square', 0.1); }
+  function sfxLove()    { playSound(700, 'triangle', 0.15); }
+  function sfxDanger()  { playSound(150, 'square', 0.4); }
+
+  /* ═══ ITEM DATA (mirrored from app.js for roulette) ═══ */
   const S = 'https://community.akamai.steamstatic.com/economy/image/';
   const ITEMS = [
     { n:'MP7 | Skulls',       r:'milspec',    img:S+'i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8jsHf9Ttk_Pm7ZKh-H_yaCW-Ej7l35OBoTCrmzUQht2mDwon7cHuWPFUlDcFxQ7EDtxbpx4W1Y-LltAfAy9USYNky6pY' },
@@ -69,7 +96,7 @@
   /* ── SCENE: Wake Up ── */
   function sceneWake() {
     clear();
-    const box = el('div', 'story-text');
+    const box = el('div', 'story-text char-protagonist');
     box.innerHTML = `
       <p class="narrator">Your alarm buzzes. Morning light leaks through the blinds.</p>
       <p class="narrator">You roll over and open your eyes.</p>
@@ -85,7 +112,7 @@
   /* ── SCENE: Phone ── */
   function scenePhone() {
     clear();
-    const box = el('div', 'story-text');
+    const box = el('div', 'story-text char-protagonist');
     box.innerHTML = `
       <p class="narrator">You unlock your phone and start scrolling.</p>
       <p class="narrator">Memes… ads… drama…</p>
@@ -100,7 +127,7 @@
   /* ── SCENE: See the Video ── */
   function sceneVideo() {
     clear();
-    const box = el('div', 'story-text');
+    const box = el('div', 'story-text char-protagonist');
     box.innerHTML = `
       <div class="comment-box" style="border-color:#334155; background:#0f172a;">
         <div class="comment-user" style="color:#94a3b8;">CaseGrinder6348</div>
@@ -153,6 +180,7 @@
   function spinCase(forceGold) {
     const strip = $('miniStrip');
     if (!strip) return;
+    try {
     strip.innerHTML = '';
     strip.style.transform = 'translateX(0)';
     strip.style.transition = 'none';
@@ -194,9 +222,15 @@
           we.innerHTML = `<img class="item-icon" src="${we.dataset.goldImg}" alt="${we.dataset.goldName}"><div class="item-name">${we.dataset.goldName}</div>`;
         }
         flash('gold');
+        sfxGold();
+      } else {
+        sfxClick();
       }
       showCaseResult(winItem);
     }, dur + 300);
+    } catch (e) {
+      console.error('Case spin error:', e);
+    }
   }
 
   function showCaseResult(item) {
@@ -253,7 +287,7 @@
 
   function sceneGrinderComment() {
     clear();
-    const box = el('div', 'story-text');
+    const box = el('div', 'story-text char-casegrinder');
     box.innerHTML = `
       <p class="narrator">Top comment:</p>
       <div class="comment-box">
@@ -270,7 +304,8 @@
   function sceneScreenGlitch() {
     clear();
     flash('violet');
-    const box = el('div', 'story-text dramatic-moment');
+    sfxGlitch();
+    const box = el('div', 'story-text dramatic-moment char-protagonist');
     box.innerHTML = `
       <p class="narrator">That night your screen <span style="color:#ef4444;animation:shake 0.3s infinite;">glitches</span>.</p>
       <p class="narrator">Static crawls across the monitor. Then something <em>moves</em> inside it.</p>
@@ -424,7 +459,7 @@
 
   function endingTrade() {
     clear();
-    const box = el('div', 'ending-screen');
+    const box = el('div', 'ending-screen ending-tragic');
     box.innerHTML = `
       <div class="ending-type bad">ENDING</div>
       <div class="ending-title" style="color:#6b5580;">The Cold Apartment</div>
@@ -445,7 +480,7 @@
 
   function sceneGrowCloser() {
     clear();
-    const box = el('div', 'story-text');
+    const box = el('div', 'story-text char-maren');
     box.innerHTML = `
       <p class="narrator">Weeks pass. Then months.</p>
       <p class="narrator">You and Maren grow closer — they teach you about the shadow world
@@ -461,7 +496,7 @@
   function sceneDM() {
     clear();
     flash('red');
-    const box = el('div', 'story-text');
+    const box = el('div', 'story-text char-casegrinder');
     box.innerHTML = `
       <p class="narrator">You're on the computer when a DM notification pops up.</p>
       <p class="narrator">It's from his account — just a photo of <strong style="color:#ef4444;">YOUR front door</strong>. No text.</p>
@@ -508,7 +543,7 @@
   function sceneMiddleOfNight() {
     clear();
     flash('red');
-    const box = el('div', 'story-text');
+    const box = el('div', 'story-text char-protagonist');
     box.innerHTML = `
       <p class="narrator">You wake up in the middle of the night to a noise in your kitchen.</p>
       <p class="narrator" style="color:#ef4444;">Maren is gone from the bed.</p>
@@ -528,7 +563,7 @@
 
   function sceneHide() {
     clear();
-    const box = el('div', 'story-text');
+    const box = el('div', 'story-text char-protagonist');
     box.innerHTML = `
       <p class="narrator">You scramble under the bed.</p>
       <p class="narrator">You see two legs walk to your computer — he <strong style="color:#ef4444;">smashes it!</strong></p>
@@ -549,7 +584,7 @@
   function sceneStayHidden() {
     clear();
     flash('violet');
-    const box = el('div', 'story-text maren-appear');
+    const box = el('div', 'story-text maren-appear char-maren');
     box.innerHTML = `
       <p class="maren">"Type what you feel for me. Say it and I'll have the power to protect us."</p>
     `;
@@ -563,7 +598,7 @@
 
   function sceneCheckItOut() {
     clear();
-    const box = el('div', 'story-text');
+    const box = el('div', 'story-text char-maren');
     box.innerHTML = `
       <p class="narrator">You sneak to the staircase.</p>
       <p class="narrator">Maren appears beside you in shadow form, pressing a clawed hand to your chest. You feel stronger.</p>
@@ -582,7 +617,7 @@
   function sceneKeepGoing() {
     clear();
     flash('red');
-    const box = el('div', 'story-text');
+    const box = el('div', 'story-text char-casegrinder');
     box.innerHTML = `
       <p class="narrator">You make your way to the kitchen and peek in —</p>
       <p class="narrator"><strong style="color:#ef4444;">He spots you.</strong></p>
@@ -616,7 +651,7 @@
   function sceneGoBack() {
     clear();
     flash('red');
-    const box = el('div', 'story-text');
+    const box = el('div', 'story-text char-protagonist');
     box.innerHTML = `
       <p class="narrator">You make your way back but — you <strong style="color:#ef4444;">stub your toe!</strong></p>
       <p class="narrator">A loud noise. You hear him getting closer.</p>
@@ -634,6 +669,8 @@
 
   function startFight(baseHP, marenBoost, fightId) {
     clear();
+    try {
+    sfxDanger();
     playerHP = baseHP + marenBoost;
     maxHP = playerHP;
     enemyHP = 80;
@@ -692,12 +729,14 @@
         atkBtn.disabled = true;
         log('CaseGrinder collapses!', 'player');
         log('Maren wraps around you protectively.', 'maren');
+        sfxWin();
         setTimeout(() => endFight(true, fightId), 1500);
         return true;
       }
       if (playerHP <= 0) {
         clearInterval(fightTimer);
         atkBtn.disabled = true;
+        sfxLose();
         log('You fall...', 'enemy');
         log('He pulls out the binding crystal.', 'enemy');
         setTimeout(() => endFight(false, fightId), 1500);
@@ -711,6 +750,7 @@
       if (playerHP <= 0 || enemyHP <= 0) return;
       const dmg = 5 + Math.floor(Math.random() * 8); // 5-12 (no weapon)
       enemyHP -= dmg;
+      sfxHit();
       log(`You strike for ${dmg} damage!`, 'player');
       updateBars();
       flash('violet');
@@ -725,11 +765,15 @@
       if (playerHP <= 0 || enemyHP <= 0) return;
       const dmg = 6 + Math.floor(Math.random() * 7); // 6-12
       playerHP -= dmg;
+      sfxHit();
       log(`CaseGrinder hits you for ${dmg}!`, 'enemy');
       updateBars();
       flash('red');
       checkEnd();
     }, 2000);
+    } catch (e) {
+      console.error('Fight system error:', e);
+    }
   }
 
   function endFight(won, fightId) {
@@ -744,7 +788,7 @@
 
   function endingFightWin() {
     flash('violet');
-    const box = el('div', 'ending-screen');
+    const box = el('div', 'ending-screen ending-romantic');
     box.innerHTML = `
       <div class="ending-type good">ENDING</div>
       <div class="ending-title" style="background:linear-gradient(90deg,#8b5cf6,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Together in the Shadows</div>
@@ -763,7 +807,7 @@
 
   function endingFightLose() {
     flash('red');
-    const box = el('div', 'ending-screen');
+    const box = el('div', 'ending-screen ending-tragic');
     box.innerHTML = `
       <div class="ending-type bad">ENDING</div>
       <div class="ending-title" style="color:#ef4444;">6,358 Days</div>
@@ -783,7 +827,7 @@
   function endingTrapped() {
     clear();
     flash('red');
-    const box = el('div', 'ending-screen');
+    const box = el('div', 'ending-screen ending-tragic');
     box.innerHTML = `
       <div class="ending-type bad">ENDING</div>
       <div class="ending-title" style="color:#ef4444;">Trapped</div>
@@ -806,6 +850,7 @@
     clear();
     loveCount = 0;
     loveSeconds = 60;
+    try {
 
     const puzzle = el('div', 'puzzle-container');
     puzzle.innerHTML = `
@@ -830,10 +875,12 @@
           counter.textContent = loveCount;
           input.value = '';
           input.className = 'puzzle-input correct';
+          sfxLove();
           flash('violet');
           setTimeout(() => { input.className = 'puzzle-input'; }, 300);
           if (loveCount >= 10) {
             clearInterval(loveInterval);
+            sfxWin();
             setTimeout(endingLoveWin, 500);
           }
         } else {
@@ -849,15 +896,19 @@
       if (loveSeconds <= 10) timer.className = 'puzzle-timer urgent';
       if (loveSeconds <= 0) {
         clearInterval(loveInterval);
+        sfxLose();
         endingLoveFail();
       }
     }, 1000);
+    } catch (e) {
+      console.error('Love puzzle error:', e);
+    }
   }
 
   function endingLoveWin() {
     clear();
     flash('violet');
-    const box = el('div', 'ending-screen');
+    const box = el('div', 'ending-screen ending-best');
     box.innerHTML = `
       <div class="ending-type best">★ BEST ENDING ★</div>
       <div class="ending-title" style="background:linear-gradient(90deg,#8b5cf6,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Love is the Strongest Magic</div>
@@ -878,7 +929,7 @@
   function endingLoveFail() {
     clear();
     flash('red');
-    const box = el('div', 'ending-screen');
+    const box = el('div', 'ending-screen ending-tragic');
     box.innerHTML = `
       <div class="ending-type bad">ENDING</div>
       <div class="ending-title" style="color:#6b5580;">Too Late</div>
@@ -903,6 +954,11 @@
   }
 
   /* ═══ INIT ═══ */
-  sceneWake();
+  try {
+    sceneWake();
+  } catch (e) {
+    console.error('Failed to initialize story:', e);
+    container.innerHTML = '<p style="color:#ef4444;">Something went wrong loading the story. Please refresh.</p>';
+  }
 
 })();

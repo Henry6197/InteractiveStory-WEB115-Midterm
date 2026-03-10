@@ -6,23 +6,22 @@
   <title>Monster Romance — Interactive Story</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <div class="maren-eyes" id="marenEyes"></div>
-
+<body class="story-page">
   <div id="app">
     <header>
       <h1>MONSTER ROMANCE</h1>
       <nav class="header-nav">
-        <a href="index.html" class="nav-link">CASES</a>
         <a href="story.html" class="nav-link active">STORY</a>
       </nav>
     </header>
 
-    <div class="story-container" id="storyContainer">
-      <!-- Scenes render here dynamically -->
-    </div>
+    <!-- Maren's eyes in background -->
+    <div class="maren-eyes" aria-hidden="true"></div>
+
+    <!-- Interactive story container - JS populates this -->
+    <div class="story-container" id="storyContainer"></div>
   </div>
 
-  <script src="story.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
