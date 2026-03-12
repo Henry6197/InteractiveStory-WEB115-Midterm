@@ -2,10 +2,39 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0;url=story.html">
-  <title>Monster Romance</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monster Romance — Interactive Story</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <p>Redirecting to <a href="story.html">story</a>...</p>
+<body class="story-page">
+  <div id="app">
+    <header>
+      <h1>MONSTER ROMANCE</h1>
+      <nav class="header-nav">
+        <a href="index.html" class="nav-link active">STORY</a>
+      </nav>
+    </header>
+
+    <!-- Story image — changes based on user interaction -->
+    <div class="story-image-wrapper">
+      <img id="story-image" src="0520f69a-d549-4dbe-96cf-58051e7b9f50.jpg" alt="Story scene">
+      <div id="image-tooltip" class="image-tooltip">Hover hint: Press E or hover to reveal secrets...</div>
+    </div>
+
+    <!-- Story paragraphs with IDs — populated by displaySceneText() -->
+    <div class="story-paragraphs">
+      <p id="paragraph1"></p>
+      <p id="paragraph2"></p>
+      <p id="paragraph3"></p>
+    </div>
+
+    <!-- Maren's eyes in background -->
+    <div class="maren-eyes" aria-hidden="true"></div>
+
+    <!-- Interactive story container — JS populates this -->
+    <div class="story-container" id="storyContainer"></div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
