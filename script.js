@@ -80,14 +80,10 @@
   const paragraph1 = document.getElementById('paragraph1');
   const paragraph2 = document.getElementById('paragraph2');
   const paragraph3 = document.getElementById('paragraph3');
-  const storyImage = document.getElementById('story-image');
-  const imageTooltip = document.getElementById('image-tooltip');
   /* ═══ IMAGE SWAP FUNCTION ═══ */
   function changeImage(filename) {
-    if (storyImage) storyImage.src = filename;
   }
   function setImageTooltip(text) {
-    if (imageTooltip) imageTooltip.textContent = text;
   }
   /* ═══ TEXT DISPLAY FUNCTION (populates paragraphs with id) ═══ */
   function displaySceneText(texts) {
@@ -99,15 +95,6 @@
   /* ═══ SOUND — new Audio() pattern ═══ */
   function playSoundFile(file) {
     try { const a = new Audio(file); a.volume = 0.3; a.play(); } catch (e) { /* ignore */ }
-  }
-  /* ═══ IMAGE HOVER — mouseover / mouseout + tooltip ═══ */
-  if (storyImage && imageTooltip) {
-    storyImage.addEventListener('mouseover', function () {
-      imageTooltip.style.display = 'block';
-    });
-    storyImage.addEventListener('mouseout', function () {
-      imageTooltip.style.display = 'none';
-    });
   }
   /* ═══ KEYBOARD INPUT — keydown on document ═══ */
   let tooltipVisible = false;
@@ -149,13 +136,6 @@
         }
       }
     }
-    // E key → toggle image tooltip / interact
-    if (event.key === 'e' || event.key === 'E') {
-      if (storyImage && imageTooltip) {
-        tooltipVisible = !tooltipVisible;
-        imageTooltip.style.display = tooltipVisible ? 'block' : 'none';
-      }
-    }
   });
   /* ═══════════════════════════════════════════════
      SCENES
@@ -165,7 +145,6 @@
     clear();
     changeImage('0520f69a-d549-4dbe-96cf-58051e7b9f50.jpg');
     setImageTooltip('You — just waking up. A new day begins...');
-    // displaySceneText removed to prevent duplicate text
     const box = el('div', 'story-text char-protagonist');
     box.innerHTML = `
       <p class="narrator">Your alarm buzzes. You roll over and open your eyes. UHHHHHHHHHHHHHHH IM SO TIRED</p>
@@ -180,7 +159,7 @@
   /* ── SCENE: Phone ── */
   function scenePhone() {
     clear();
-    // displaySceneText removed to prevent duplicate text
+
     const box = el('div', 'story-text char-protagonist');
     box.innerHTML = `
       <p class="narrator">You unlock your phone and start scrolling. like always</p>
@@ -219,7 +198,6 @@
     // Day counter
     changeImage('gold.jpg');
     setImageTooltip('Day ' + d + ' — will you get the gold?');
-    // displaySceneText removed to prevent duplicate text
     const dc = el('div', 'day-counter' + (d === 10 ? ' gold-day' : ''));
     dc.innerHTML = `<div class="day-label">DAY</div><div class="day-num">${d}</div>`;
     container.appendChild(dc);
@@ -237,8 +215,9 @@
       spinCase(d === 10);
     });
     container.appendChild(btn);
-    // Skip cases button removed
+    
   }
+//start of spin animation (AI)
   function spinCase(forceGold) {
     const strip = $('miniStrip');
     if (!strip) return;
@@ -299,6 +278,7 @@
       ? `<div>★ <strong>${item.n}</strong> ★</div><div class="result-sub">YOU GOT GOLD!</div>`
       : `<div>Nothing special.</div><div class="result-sub text-muted">${item.n}</div>`;
     container.appendChild(result);
+    //end of spin animation (AI)
     if (isGold) {
       // Day 10 — gold path
       const btn = el('button', 'story-continue', '📹 Post the video');
@@ -324,7 +304,6 @@
   function sceneDay10Viral() {
     clear();
     flash('gold');
-    // displaySceneText removed to prevent duplicate text
     const box = el('div', 'story-text');
     box.innerHTML = `
       <p class="narrator">You post the video.</p>
@@ -358,7 +337,6 @@
     playSoundFile('click.wav');
     changeImage('0520f69a-d549-4dbe-96cf-58051e7b9f50.jpg');
     setImageTooltip('Something is crawling out of your monitor...');
-    // displaySceneText removed to prevent duplicate text
     const box = el('div', 'story-text dramatic-moment char-protagonist');
     box.innerHTML = `
       <p class="narrator">That night your screen <span class="glitch-text">glitches</span>.</p>
@@ -376,7 +354,6 @@
     flash('violet');
     changeImage('0520f69a-d549-4dbe-96cf-58051e7b9f50.jpg');
     setImageTooltip('Karambit Case Hardened 387 Factory New — with glowing violet eyes');
-    // displaySceneText removed to prevent duplicate text
     const box = el('div', 'story-text maren-appear');
     box.innerHTML = `
       <p class="maren">"The gold summoned me here. It opens doors between worlds."</p>
@@ -535,7 +512,6 @@
     flash('red');
     changeImage('unnamed.jpg');
     setImageTooltip('CaseGrinder6348 — he found your address');
-    // displaySceneText removed to prevent duplicate text
     const box = el('div', 'story-text char-casegrinder');
     box.innerHTML = `
       <p class="narrator">You're on the computer when a DM notification pops up.</p>
@@ -700,7 +676,6 @@
     sfxDanger();
     changeImage('unnamed.jpg');
     setImageTooltip('CaseGrinder6348 — FIGHT!');
-    // displaySceneText removed to prevent duplicate text
     playerHP = baseHP + marenBoost;
     maxHP = playerHP;
     enemyHP = 80;
@@ -811,7 +786,6 @@
     flash('violet');
     changeImage('0520f69a-d549-4dbe-96cf-58051e7b9f50.jpg');
     setImageTooltip('Together in the Shadows — you fought for each other');
-    // displaySceneText removed to prevent duplicate text
     const box = el('div', 'ending-screen ending-romantic');
     box.innerHTML = `
       <div class="ending-type good">ENDING</div>
@@ -872,7 +846,6 @@
     loveSeconds = 60;
     changeImage('0520f69a-d549-4dbe-96cf-58051e7b9f50.jpg');
     setImageTooltip('Type LOVE to give Karambit Case Hardened 387 Factory New the power to protect you');
-    // displaySceneText removed to prevent duplicate text
     try {
     const puzzle = el('div', 'puzzle-container');
     puzzle.innerHTML = `
