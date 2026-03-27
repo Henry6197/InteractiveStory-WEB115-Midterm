@@ -376,20 +376,6 @@ header h1 {
   box-shadow: none;
 }
 
-.btn-skip {
-  display: inline-block;
-  background: #2e1a47;
-  color: #e8daf0;
-  margin-top: 10px;
-  text-decoration: none;
-  text-align: center;
-}
-
-.btn-skip:hover {
-  background: #3b2460;
-  transform: scale(1.05);
-}
-
 .btn-back {
   background: #2e1a47;
   color: #e8daf0;
@@ -3191,7 +3177,7 @@ body.story-page header {
 
 .fight-arena::after {
   right: -10px;
-  background-image: url('svg/casegrinder.svg');
+  background-image: url('unnamed.jpg');
   opacity: 0.2;
 }
 
@@ -3223,7 +3209,7 @@ body.story-page header {
   bottom: 10px;
   width: 80px;
   height: 100px;
-  background-image: url('svg/casegrinder.svg');
+  background-image: url('unnamed.jpg');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: bottom right;

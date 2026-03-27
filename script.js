@@ -1,7 +1,7 @@
 // script.js — Interactive Story Engine
 (function () {
   'use strict';
-  /* ═══ SOUND EFFECTS ═══ */
+  //
   function playSound(freq, type, duration) {
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -16,7 +16,7 @@
       osc.start();
       osc.stop(ctx.currentTime + (duration || 0.3));
     } catch (e) {
-      // Audio not supported — ignore silently
+      
     }
   }
   function sfxClick()   { playSound(600, 'sine', 0.1); }
@@ -237,9 +237,7 @@
       spinCase(d === 10);
     });
     container.appendChild(btn);
-    const skip = el('button', 'story-continue story-skip', '⏩ SKIP CASES');
-    skip.addEventListener('click', () => { day = 10; sceneDay10Viral(); });
-    container.appendChild(skip);
+    // Skip cases button removed
   }
   function spinCase(forceGold) {
     const strip = $('miniStrip');
@@ -700,7 +698,7 @@
     clear();
     try {
     sfxDanger();
-    changeImage('svg/casegrinder.svg');
+    changeImage('unnamed.jpg');
     setImageTooltip('CaseGrinder6348 — FIGHT!');
     // displaySceneText removed to prevent duplicate text
     playerHP = baseHP + marenBoost;
@@ -713,7 +711,7 @@
       ${baseHP < 100 ? '<div class="maren-boost maren-boost-injured">Injured from stubbed toe (-15 HP)</div>' : ''}
       <div class="fight-hud">
         <div class="fighter player">
-          <div class="fighter-name">YOU + MAREN</div>
+          <div class="fighter-name">YOU + KARAMBIT</div>
           <div class="hp-bar-container">
             <div class="hp-bar player-hp" id="playerBar"></div>
             <div class="hp-text" id="playerHPText">${playerHP} HP</div>
@@ -975,6 +973,6 @@
     sceneWake();
   } catch (e) {
     console.error('Failed to initialize story:', e);
-    container.innerHTML = '<p class="text-red">Something went wrong loading the story. Please refresh.</p>';
+    container.innerHTML = '<p class="text-red">refresh</p>';
   }
 })();
